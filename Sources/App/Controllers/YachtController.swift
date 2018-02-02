@@ -56,10 +56,10 @@ final class YachtController: ResourceRepresentable {
         // First attempt to create a new Post from the supplied JSON.
         // If any required fields are missing, this request will be denied.
         let new = try req.postYacht()
-
+        
         // Update the post with all of the properties from
         // the new model
-        model.name = new.name
+        model.data.name = new.data.name
         try model.save()
 
         // Return the updated model

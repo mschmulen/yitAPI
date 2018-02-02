@@ -19,14 +19,17 @@ final class YachtPartController: ResourceRepresentable {
 //        try post.save()
 //        return post
         
-        guard let json = req.json else { throw Abort.badRequest }
-        
-        guard let post: YachtPart = try? req.decodeJSON() else {
-//        guard let post: YachtPart = try? req.json.decodeJSON() else {
+//        guard let json = req.json else { throw Abort.badRequest }
+        guard let data: YachtPartData = try? req.decodeJSON() else {
             throw Abort.badRequest
         }
-        try post.save()
-        return post
+        let model:YachtPart = YachtPart(name: data.name, price: data.price, currency: data.currency)
+//        guard let model: YachtPart = try? req.decodeJSON() else {
+////        guard let post: YachtPart = try? req.json.decodeJSON() else {
+//            throw Abort.badRequest
+//        }
+        try model.save()
+        return model
     }
 
     /// When the consumer calls 'GET' on a specific resource, ie:
@@ -66,17 +69,24 @@ final class YachtPartController: ResourceRepresentable {
     func replace(_ req: Request, model: YachtPart) throws -> ResponseRepresentable {
         // First attempt to create a new Post from the supplied JSON.
         // If any required fields are missing, this request will be denied.
-        
-        
+
         //        let new = try req.postYachtPart()
-        guard let new:YachtPart = try? req.decodeJSON() else {
-            //        guard let post: YachtPart = try? req.json.decodeJSON() else {
+        
+        guard let data:YachtPartData = try? req.decodeJSON() else {
             throw Abort.badRequest
         }
         
+        let new = YachtPart(name: data.name, price: data.price, currency: data.currency)
+
+//        guard let new:YachtPart = try? req.decodeJSON() else {
+            //        guard let post: YachtPart = try? req.json.decodeJSON() else {
+//            throw Abort.badRequest
+//        }
+        
         // Update the post with all of the properties from
         // the new model
-        model.name = new.name
+//        model.name = new.name
+        model.data.name = new.data.name
         try model.save()
         return model
     }

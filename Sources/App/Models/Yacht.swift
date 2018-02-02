@@ -4,13 +4,7 @@ import FluentProvider
 final class Yacht: Model {
     var storage = Storage()
     
-    var name:String
-    var make:String
-    var year:Int
-    var price:Int
-    var currency:String // = "USD"
-    var description:String
-    var flag:String
+    var data:YachtData
 
     struct Keys {
         static let id = "id"
@@ -23,35 +17,47 @@ final class Yacht: Model {
         static let flag = "flag"
     }
     
+//    enum CodingKeys: String, CodingKey {
+//        case id
+//        case name
+//        case price
+//        case currency
+//    }
+
+    
     init(name: String, make:String, year:Int, price:Int, currency:String, description:String, flag:String) {
-        self.name = name
-        self.make = make
-        self.year = year
-        self.price = price
-        self.currency = currency
-        self.description = description
-        self.flag = flag
+        data = YachtData(
+            name:name,
+            make:make,
+            year:year,
+            price:price,
+            currency:currency,
+            description:description,
+            flag:flag
+            )
     }
     
     init(row: Row) throws {
-        self.name = try row.get(Keys.name)
-        self.make = try row.get(Keys.make)
-        self.year = try row.get(Keys.year)
-        self.price = try row.get(Keys.price)
-        self.currency = try row.get(Keys.currency)
-        self.description = try row.get(Keys.description)
-        self.flag = try row.get(Keys.flag)
+        self.data = YachtData(
+            name: try row.get(Keys.name),
+            make:try row.get(Keys.make),
+            year: try row.get(Keys.year),
+            price: try row.get(Keys.price),
+            currency: try row.get(Keys.currency),
+            description: try row.get(Keys.description),
+            flag: try row.get(Keys.flag)
+        )
     }
     
     func makeRow() throws -> Row {
         var row = Row()
-        try row.set(Keys.name, name)
-        try row.set(Keys.make, make)
-        try row.set(Keys.year, year)
-        try row.set(Keys.price, price)
-        try row.set(Keys.currency, currency)
-        try row.set(Keys.description, description)
-        try row.set(Keys.flag, flag)
+        try row.set(Keys.name, data.name)
+        try row.set(Keys.make, data.make)
+        try row.set(Keys.year, data.year)
+        try row.set(Keys.price, data.price)
+        try row.set(Keys.currency, data.currency)
+        try row.set(Keys.description, data.description)
+        try row.set(Keys.flag, data.flag)
         return row
     }
 }
@@ -95,13 +101,13 @@ extension Yacht: JSONConvertible {
     func makeJSON() throws -> JSON {
         var json = JSON()
         try json.set(Keys.id, id)
-        try json.set(Keys.name, name)
-        try json.set(Keys.make, make)
-        try json.set(Keys.year, year)
-        try json.set(Keys.price, price)
-        try json.set(Keys.currency, currency)
-        try json.set(Keys.description, description)
-        try json.set(Keys.flag, flag)
+        try json.set(Keys.name, data.name)
+        try json.set(Keys.make, data.make)
+        try json.set(Keys.year, data.year)
+        try json.set(Keys.price, data.price)
+        try json.set(Keys.currency, data.currency)
+        try json.set(Keys.description, data.description)
+        try json.set(Keys.flag, data.flag)
         return json
     }
 }
@@ -111,13 +117,15 @@ extension Yacht: NodeRepresentable {
     func makeNode(in context: Context?) throws -> Node {
         var node = Node(context)
         try node.set(Keys.id, id)
-        try node.set(Keys.name, name)
-        try node.set(Keys.make, make)
-        try node.set(Keys.year, year)
-        try node.set(Keys.price, price)
-        try node.set(Keys.currency, currency)
-        try node.set(Keys.description, description)
-        try node.set(Keys.flag, flag)
+        
+        try node.set(Keys.name, data.name)
+        try node.set(Keys.make, data.make)
+        try node.set(Keys.year, data.year)
+        try node.set(Keys.price, data.price)
+        try node.set(Keys.currency, data.currency)
+        try node.set(Keys.description, data.description)
+        try node.set(Keys.flag, data.flag)
+        
         return node
     }
 }
@@ -137,7 +145,7 @@ extension Yacht: Updateable {
             // If the request contains a String at key "content"
             // the setter callback will be called.
             UpdateableKey(Keys.name, String.self) { model, content in
-                model.name = name
+                model.data.name
             }
         ]
     }
