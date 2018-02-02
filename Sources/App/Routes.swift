@@ -12,28 +12,46 @@ extension Droplet {
     /// without any authentication. This includes
     /// creating a new User.
     private func setupUnauthenticatedRoutes() throws {
-        // a simple json example response
+
         get("hello") { req in
             var json = JSON()
             try json.set("hello", "world")
             return json
         }
-
-        // a simple plaintext example response
-        get("plaintext") { req in
-            return "Hello, world!"
-        }
-
+        
         // response to requests to /info domain
         // with a description of the request
         get("info") { req in
             return req.description
         }
 
-        // create a new user
-        //
+
+        post("deviceToken") { req in
+            // require that the request body be json
+            guard let json = req.json else {
+                throw Abort(.badRequest)
+            }
+            
+            print( "Device Token Post \(json)")
+            let device = try Device(json: json)
+            
+            // ensure no user with this token already exists
+            guard let existingDevice = try Device.makeQuery().filter(Device.Keys.deviceToken, device.deviceToken).first() else {
+                // make a new one and return it
+                try device.save()
+                return device
+            }
+            
+            // update the existing device to have the users email
+            existingDevice.accountNameEmail = json[Device.Keys.accountNameEmail]?.string
+            
+            //save it and return it
+            try existingDevice.save()
+            return existingDevice
+        }
+        
+        
         // POST /users
-        // <json containing new user information>
         post("users") { req in
             // require that the request body be json
             guard let json = req.json else {
@@ -111,5 +129,20 @@ extension Droplet {
             let user = try req.user()
             return "Hello, \(user.name)"
         }
+        
+        //        token.get("myDevice") { req in
+        //            let currentUser = try req.user()
+        //            guard let existingDevice = try Device.makeQuery().filter(Device.Keys.accountNameEmail, currentUser.email).first() else {
+        //                let json = try req.user().makeJSON()
+        //                return json
+        //            }
+        //
+        //            let json = try existingDevice.makeJSON()
+        //            return json
+        //        }
+        
+        try resource("yachts", YachtController.self)
+        try resource("parts", YachtPartController.self)
+        
     }
 }
