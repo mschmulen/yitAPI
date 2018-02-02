@@ -29,7 +29,6 @@ final class YachtPart : Model, Codable {
         name = try values.decode(String.self, forKey: .name)
         price = try values.decode(Int.self, forKey: .price)
         currency = try values.decode(String.self, forKey: .currency)
-//        billingAddress = try BillingAddress(from: decoder)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -37,21 +36,19 @@ final class YachtPart : Model, Codable {
         try container.encode(name, forKey: .name)
         try container.encode(name, forKey: .name)
         try container.encode(currency, forKey: .currency)
-//        try container.encode(billingAddress.country, forKey: .country)
-//        try container.encode(billingAddress.postalCode, forKey: .postalCode)
     }
     
     init(row: Row) throws {
-        self.name = try row.get(CodingKeys.name.stringValue)
-        self.price = try row.get(CodingKeys.price.stringValue)
-        self.currency = try row.get(CodingKeys.currency.stringValue)
+        self.name = try row.get(CodingKeys.name.rawValue)
+        self.price = try row.get(CodingKeys.price.rawValue)
+        self.currency = try row.get(CodingKeys.currency.rawValue)
     }
     
     func makeRow() throws -> Row {
         var row = Row()
-        try row.set(CodingKeys.name.stringValue, name)
-        try row.set(CodingKeys.price.stringValue, price)
-        try row.set(CodingKeys.currency.stringValue, currency)
+        try row.set(CodingKeys.name.rawValue, name)
+        try row.set(CodingKeys.price.rawValue, price)
+        try row.set(CodingKeys.currency.rawValue, currency)
         return row
     }
     
@@ -77,9 +74,9 @@ extension YachtPart: Preparation {
     static func prepare(_ database: Database) throws {
         try database.create(self) { builder in
             builder.id()
-            builder.string(CodingKeys.name.stringValue)
-            builder.int(CodingKeys.price.stringValue)
-            builder.string(CodingKeys.currency.stringValue)
+            builder.string(CodingKeys.name.rawValue)
+            builder.int(CodingKeys.price.rawValue)
+            builder.string(CodingKeys.currency.rawValue)
         }
     }
 
@@ -93,18 +90,18 @@ extension YachtPart: Preparation {
 extension YachtPart: JSONConvertible {
     convenience init(json: JSON) throws {
         try self.init(
-            name: json.get(CodingKeys.name.stringValue),
-            price:json.get(CodingKeys.price.stringValue),
-            currency:json.get(CodingKeys.currency.stringValue)
+            name: json.get(CodingKeys.name.rawValue),
+            price:json.get(CodingKeys.price.rawValue),
+            currency:json.get(CodingKeys.currency.rawValue)
         )
     }
 
     func makeJSON() throws -> JSON {
         var json = JSON()
-        try json.set(CodingKeys.id.stringValue, id)
-        try json.set(CodingKeys.name.stringValue, name)
-        try json.set(CodingKeys.price.stringValue, price)
-        try json.set(CodingKeys.currency.stringValue, currency)
+        try json.set(CodingKeys.id.rawValue, id)
+        try json.set(CodingKeys.name.rawValue, name)
+        try json.set(CodingKeys.price.rawValue, price)
+        try json.set(CodingKeys.currency.rawValue, currency)
         return json
     }
 }
@@ -113,10 +110,10 @@ extension YachtPart: JSONConvertible {
 extension YachtPart: NodeRepresentable {
     func makeNode(in context: Context?) throws -> Node {
         var node = Node(context)
-        try node.set(CodingKeys.id.stringValue, id)
-        try node.set(CodingKeys.name.stringValue, name)
-        try node.set(CodingKeys.price.stringValue, price)
-        try node.set(CodingKeys.currency.stringValue, currency)
+        try node.set(CodingKeys.id.rawValue, id)
+        try node.set(CodingKeys.name.rawValue, name)
+        try node.set(CodingKeys.price.rawValue, price)
+        try node.set(CodingKeys.currency.rawValue, currency)
 
         return node
     }
@@ -137,7 +134,7 @@ extension YachtPart: Updateable {
             // If the request contains a String at key "content"
             // the setter callback will be called.
             
-            UpdateableKey(YachtPart.CodingKeys.name.stringValue, String.self) { model, content in
+            UpdateableKey(YachtPart.CodingKeys.name.rawValue, String.self) { model, content in
                 model.name = name
             }
             
