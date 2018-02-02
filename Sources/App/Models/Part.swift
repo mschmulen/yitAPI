@@ -13,18 +13,6 @@ final class YachtPart : Model {
         case currency
     }
     
-//    struct Keys {
-//        static let id = "id"
-//        static let name = "name"
-//        static let make = "make"
-//        static let year = "year"
-//        static let price = "price"
-//        static let currency = "currency"
-//        static let description = "description"
-//        static let flag = "flag"
-//    }
-    
-    
     init(name: String, price:Int, currency:String) {
         self.data = YachtPartData(name:name, price:price, currency:currency)
     }

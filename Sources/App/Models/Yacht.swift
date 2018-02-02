@@ -18,12 +18,15 @@ final class Yacht: Model {
     }
     
 //    enum CodingKeys: String, CodingKey {
-//        case id
-//        case name
-//        case price
-//        case currency
+//          case id
+//          case name
+//          case make
+//          case year
+//          case price
+//          case currency
+//          case description
+//          case flag
 //    }
-
     
     init(name: String, make:String, year:Int, price:Int, currency:String, description:String, flag:String) {
         data = YachtData(
